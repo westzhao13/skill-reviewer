@@ -1,6 +1,6 @@
 # Skill Reviewer
 
-[中文](README.zh.md) | [English](README.en.md)
+[中文](README.md) | [English](README.en.md)
 
 > 一个用于审查 Claude Skill 质量的 Skill,基于 Anthropic 官方最佳实践的 22 项检查清单。
 
@@ -101,7 +101,7 @@ git clone <repo-url> ~/.claude/skills/skill-reviewer
 
 ```
 skill-reviewer/
-├── README.zh.md                                    # 本文件(中文)
+├── README.md                                       # 本文件(中文)
 ├── SKILL.md                                        # 审查流程与 22 项检查清单
 ├── references/
 │   └── writing-good-skills.md                      # 审查时使用的速查表

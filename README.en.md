@@ -1,6 +1,6 @@
 # Skill Reviewer
 
-[中文](README.zh.md) | [English](README.en.md)
+[中文](README.md) | [English](README.en.md)
 
 > A skill for reviewing the quality of Claude Skills, based on a 22-item checklist derived from Anthropic's official best practices.
 
@@ -101,7 +101,7 @@ The review report is split into three sections, followed by a self-check confirm
 
 ```
 skill-reviewer/
-├── README.zh.md                                    # Chinese version of this file
+├── README.md                                       # Chinese version (default)
 ├── README.en.md                                    # English version of this file
 ├── SKILL.md                                        # Review process and 22-item checklist
 ├── references/
