@@ -58,7 +58,7 @@ Skill Reviewer 是一个面向 Skill 作者的审查工具,通过对 `SKILL.md` 
 将本仓库克隆至 Claude Code 的 Skills 目录:
 
 ```bash
-git clone <repo-url> ~/.claude/skills/skill-reviewer
+git clone https://github.com/westzhao13/skill-reviewer.git ~/.claude/skills/skill-reviewer
 ```
 
 或将目录拷贝到任意 Skill 加载路径下,Claude Code 启动时会自动识别。
