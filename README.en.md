@@ -58,7 +58,7 @@ The checklist contains 22 items, grouped into three categories:
 Clone this repository into Claude Code's skills directory:
 
 ```bash
-git clone <repo-url> ~/.claude/skills/skill-reviewer
+git clone https://github.com/westzhao13/skill-reviewer.git ~/.claude/skills/skill-reviewer
 ```
 
 Alternatively, copy the directory into any skill load path; Claude Code will detect it automatically at startup.
