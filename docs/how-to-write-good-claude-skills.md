@@ -217,7 +217,7 @@ standards for different scenarios. Recommended tiering:
 | **YAML description** | `[E]` One sentence hits "do Y in scenario X" with clear trigger signals | `[E]` "A useful skill for various tasks" (vague) |
 | **Instruction length** | `[S]` <5k tokens; `[E]` each section is decision rules or code | `[E]` Stuffing a whole domain tutorial in; or conversely <1k tokens without saying "when to use" |
 | **Helper scripts** | `[S]` Includes tested, working helper code; `[CK]` conventionally in `scripts/` | `[E]` "Run a shell command to get X" — Claude re-assembles every time |
-| **Path handling** | `[CK]` Use placeholders like `${WIKIBASE_ROOT}`, expand at deploy time | `[CK]` Hardcoded `/home/user1/project/...` — breaks on user change |
+| **Path handling** | `[CK]` Use placeholders like `${SKILL_ROOT}`, expand at deploy time | `[CK]` Hardcoded `/home/user1/project/...` — breaks on user change |
 | **Error handling** | `[E]` Fail early, error message points to specific cause | `[E]` Swallow exception and return empty string, or throw "An error occurred" |
 | **Composability** | `[E]` Don't read others' global state, don't lock exclusive files, don't depend on cwd | `[E]` Assume you're the only process, require exclusive env vars |
 | **Testing** | `[E]` At least one end-to-end bash/python test | `[E]` No tests at all, "should work" |
@@ -306,7 +306,7 @@ sharing** — not item-by-item during writing. Process:
 | 13 | `[S]` No "voodoo constants" — all values justified | `[E]` Every number/string/path must be explainable. Counter-example: `timeout=30`. Positive example: `timeout=30  # max seconds for PDF render; longer runs indicate resource leak`. |
 | 14 | `[S]` Dependencies listed and verified available | `[E]` SKILL.md's Prerequisites section lists all dependencies. Script entry does `try/except` verification, returning install guidance on failure (not silent skip). |
 | 15 | `[S]` Scripts have clear documentation | Script file itself writes: (1) one-line description, (2) parameters, (3) return values/exit codes, (4) 1-2 usage examples. Not in SKILL.md. |
-| 16 | `[S]` No Windows paths — all forward slashes | `[CK]` Backslashes are escape characters in Claude's Linux environment. `scripts\tools\check.py` → `scripts/check.py`. This is **different** from the `${WIKIBASE_ROOT}` placeholder concern. |
+| 16 | `[S]` No Windows paths — all forward slashes | `[CK]` Backslashes are escape characters in Claude's Linux environment. `scripts\tools\check.py` → `scripts/check.py`. This is **different** from the `${SKILL_ROOT}` placeholder concern. |
 | 17 | `[S]` Critical operations have validation/confirmation steps | Read-back verification after writes, sanity check after calculations, status code check after network requests. Irreversible operations (delete/overwrite) require confirmation before execution. |
 | 18 | `[S]` Quality-critical tasks include feedback loops | If output needs human judgment (document generation, code review), include self-assessment step: Claude self-checks and points out improvements before delivery. |
 
@@ -393,7 +393,7 @@ in the same knowledge system, **not contradictory**.
 | # | Name | Tag | Value |
 |---|---|---|---|
 | F-23 | description is a routing signal | `[E]` key contribution | Affects auto-load hit rate, easiest to get wrong |
-| F-24 | Use placeholders for paths (`${WIKIBASE_ROOT}`) | `[CK]` | Expand at deploy time, avoid hardcoding |
+| F-24 | Use placeholders for paths (`${SKILL_ROOT}`) | `[CK]` | Expand at deploy time, avoid hardcoding |
 | F-25 | Composability: don't assume exclusive environment | `[E]` | Skills coexist with 100+ others, exclusive env var = guaranteed break |
 | F-26 | Testing tier: personal/team/public three tiers | `[E]` | Different minimum requirements for different sharing scopes |
 | F-27 | Error message three elements: what + why + how-to-fix | `[E]` refines A #12 | Error messages are actionable signals, not yes/no |
@@ -752,72 +752,6 @@ response = client.beta.messages.create(
   number
 - `[S]` Custom Skills **must** use epoch timestamps (no other choice)
 
-### 7.9 Placeholders like `${WIKIBASE_ROOT}` — usage example
-
-> F-24 (Pass 6) only mentioned the placeholder concept; this section
-> gives **concrete usage**.
-
-**Use case:** When a Skill is deployed on multiple machines and across
-different users, hard-coded absolute paths cause:
-- Teammate A's `/Users/alice/project` becomes B's `/Users/bob/project`
-  → script fails
-- CI's `/home/runner/work/...` doesn't exist on the local dev box
-
-**Placeholder conventions:**
-
-| Placeholder | Meaning | Example value |
-|---|---|---|
-| `${WIKIBASE_ROOT}` | Root of the project containing the Skill | `/Users/xiang/Work/sfx` |
-| `${HOME}` | User's home directory | `/Users/xiang` |
-| `${SKILL_DIR}` | Current Skill's directory | `${WIKIBASE_ROOT}/skills/pdf` |
-| `${WORKSPACE}` | Runtime working directory | `/tmp/run-12345` |
-
-**Usage in SKILL.md:**
-
-```markdown
-## Quick start
-
-Place the PDF to be processed in `${WORKSPACE}/input/`, then run:
-
-\`\`\`bash
-python ${SKILL_DIR}/scripts/validate.py ${WORKSPACE}/input/report.pdf
-\`\`\`
-
-The script will:
-1. Validate PDF integrity
-2. Output metadata to `${WORKSPACE}/output/meta.json`
-```
-
-**Expansion at deploy time (pseudocode):**
-
-```python
-# deploy.py
-content = open("SKILL.md").read()
-content = content.replace("${WIKIBASE_ROOT}", os.environ["WIKIBASE_ROOT"])
-content = content.replace("${SKILL_DIR}", os.environ["SKILL_DIR"])
-content = content.replace("${WORKSPACE}", tempfile.mkdtemp())
-open("SKILL.deployed.md", "w").write(content)
-```
-
-**With environment variables:**
-
-```bash
-# .env
-WIKIBASE_ROOT=/Users/xiang/Work/sfx
-SKILL_DIR=${WIKIBASE_ROOT}/skills/pdf
-```
-
-**Anti-example (hard-coded):**
-
-```markdown
-# ❌ Anti-example
-python /Users/xiang/Work/sfx/skills/pdf/scripts/validate.py ~/Downloads/report.pdf
-```
-
-> **`[E]` One-line principle:** Every absolute path that appears in
-> SKILL.md should be a placeholder; placeholders are injected from
-> environment variables at deploy time.
-
 ### 7.10 Test pass/fail criteria
 
 > The 22-item Checklist items 19-21 say "test", but don't define
@@ -895,53 +829,3 @@ def test_error_missing_dep():
 ```
 
 ---
-
-## Revision log
-
-- **v1 (2026-06-11, early version)**: Three-pass summary, no distinction
-  between source and author extrapolation. Adversarial reviewer pointed
-  out 30+ unsupported claims; the comparison table was almost entirely
-  fabricated.
-- **v2 (this version)**: Introduced the `[S]/[E]/[CK]/[F]` tag system;
-  removed all fabrication; explicitly placed "good skill = ..." in author
-  synthesis, **not as source summary**.
-- **v3 (2026-06-11)**: Absorbed Anthropic's official
-  [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
-  checklist. Process: two independent subagents did gap analysis + merge
-  proposal → third subagent arbitrated disagreements (5 disputed points
-  all ruled on) → author wrote final version. Added: (1) "Additional
-  hard constraints" at the end of Pass 2 (15 of the 22 Checklist items
-  are new), (2) brand-new "Pass 5" review framework (three review
-  tables + sharing-tier gating), (3) cheat sheet extended with both
-  sources. All Checklist items marked `[S]`, readings marked
-  `[E]/[CK]`.
-- **v4 (2026-06-11)**: Added "Pass 6: Cross-validation with official
-  Best Practices". Made A and B differences explicit: (1) 22 A
-  checklist + 5 B-unique features (F-23..F-27) = 27 features, (2) 9 A
-  anti-patterns + 8 B-unique anti-patterns (AP-10..AP-17) + 3 author
-  observations (AP-18..AP-20) = 21 anti-patterns, (3) cheat sheet
-  distinguishes A unique / B unique / shared. The 16 new features and
-  11 new anti-patterns have been synced to
-  `skills/skill-reviewer/references/writing-good-skills.md` as an
-  audit comparison table.
-- **v5 (2026-06-11, this file)**: English translation of the Chinese
-  original. The Chinese source-of-truth lives at
-  `how-to-write-good-claude-skills-cn.md` (co-located in
-  `skills/skill-reviewer/docs/`) for native-Chinese readers. This
-  English version is also in `skills/skill-reviewer/docs/` so the
-  skill-reviewer can reference both the distilled checklist
-  (`../references/writing-good-skills.md`) and the full narrative
-  source without leaving the skill directory. Filenames follow
-  kebab-case per the article's own "no spaces in filenames" principle.
-- **v6 (2026-06-11, this file)**: After section-by-section comparison with
-  both source documents, added "Pass 7: Addendum" with 10 sub-sections
-  covering: (1) Skills vs Tools/Subagents hierarchy, (2) Bundle directory
-  structure conventions, (3) description broadness diagnosis + 4-step
-  repair, (4) consolidated negative checklist, (5) motivation narrative,
-  (6) Beta tools cooperation matrix, (7) Claude A↔B 5-step iteration
-  loop, (8) production deployment versioning, (9) `${WIKIBASE_ROOT}`
-  usage example, (10) test pass/fail criteria. The Chinese version
-  (`how-to-write-good-claude-skills-cn.md`) remains the source of truth.
-  Also corrected the frontmatter path: the Chinese source-of-truth
-  filename is `how-to-write-good-claude-skills-cn.md` (not the previously
-  stated `../../How to write good Claude skills.md`).

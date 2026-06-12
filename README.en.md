@@ -2,11 +2,11 @@
 
 [中文](README.md) | [English](README.en.md)
 
-> A skill for reviewing the quality of Claude Skills, based on a 22-item checklist derived from Anthropic's official best practices.
+> A skill for reviewing the quality of Skills, based on a 22-item checklist derived from Anthropic's official best practices.
 
 ## Overview
 
-Skill Reviewer is a review tool aimed at Claude Skill authors. By systematically inspecting a `SKILL.md` and its companion files, it helps authors surface quality issues, normalize conventions, and clarify the appropriate sharing tier before publishing.
+Skill Reviewer is a review tool aimed at Skill authors. By systematically inspecting a `SKILL.md` and its companion files, it helps authors surface quality issues, normalize conventions, and clarify the appropriate sharing tier before publishing.
 
 The inspection rules are distilled from two core Anthropic documents, covering 22 dimensions including description conventions, body structure, script quality, error handling, validation mechanisms, and test coverage.
 

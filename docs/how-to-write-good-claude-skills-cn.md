@@ -126,7 +126,7 @@ description: "Synthesis of two Anthropic sources (Cookbook + official Best Pract
 | **YAML description** | `[E]` 一句话点出"于 X 场景下做 Y"，含明确触发信号 | `[E]` "A useful skill for various tasks"（空泛） |
 | **指令长度** | `[S]` < 5k tokens；`[E]` 每段皆为判断规则或代码 | `[E]` 将整个领域教程塞入；或反向 < 1k tokens 而未明言"何时用" |
 | **辅助脚本** | `[S]` 含已测试可用的 helper 代码；`[CK]` 依惯例置于 `scripts/` 下 | `[E]` "运行 shell 命令获取 X"——Claude 每轮重新拼接 |
-| **路径处理** | `[CK]` 采用 `${WIKIBASE_ROOT}` 一类占位符，于部署时再行展开 | `[CK]` 硬编码 `/home/user1/project/...`——换一个用户即崩 |
+| **路径处理** | `[CK]` 采用 `${SKILL_ROOT}` 一类占位符，于部署时再行展开 | `[CK]` 硬编码 `/home/user1/project/...`——换一个用户即崩 |
 | **错误处理** | `[E]` 快速 fail，错误信息直指具体原因 | `[E]` 吞咽异常并返回空字符串，或抛出 "An error occurred" |
 | **可组合性** | `[E]` 不读取他人全局状态，不独占文件，不依赖 cwd | `[E]` 预设自身为唯一进程，要求独占 env var |
 | **测试** | `[E]` 至少一项端到端 bash/python 测试 | `[E]` 无任何测试，仅以"应该能跑"作结 |
@@ -188,7 +188,7 @@ description: "Synthesis of two Anthropic sources (Cookbook + official Best Pract
 | 13 | `[S]` 无"巫术常量"——每一取值皆须有据 | `[E]` 任何数字 / 字符串 / 路径皆须可被解释。反例：`timeout=30`。正例：`timeout=30  # max seconds for PDF render; longer runs indicate resource leak`。 |
 | 14 | `[S]` 依赖须列出且经确认可用 | `[E]` SKILL.md 中设 Prerequisites 小节以枚举全部依赖。脚本入口以 `try/except` 验证，遇阻返回安装指引（而非静默跳过）。 |
 | 15 | `[S]` 脚本须附清晰文档 | 文档栖于脚本文件自身，须含：(1) 一句话说明，(2) 参数列表，(3) 返回值/退出码，(4) 1–2 个使用示例。SKILL.md 中毋须复述。 |
-| 16 | `[S]` 摒弃 Windows 风格路径——一律正斜杠 | `[CK]` 反斜杠在 Claude 的 Linux 环境中即为转义字符。`scripts\tools\check.py`→`scripts/check.py`。此点与 `${WIKIBASE_ROOT}` 占位符系**不同**之可移植性关切。 |
+| 16 | `[S]` 摒弃 Windows 风格路径——一律正斜杠 | `[CK]` 反斜杠在 Claude 的 Linux 环境中即为转义字符。`scripts\tools\check.py`→`scripts/check.py`。此点与 `${SKILL_ROOT}` 占位符系**不同**之可移植性关切。 |
 | 17 | `[S]` 关键操作须有验证/确认步骤 | 写入后回读校验、计算后作 sanity check、网络请求后检查状态码。不可逆操作（删除、覆盖）于执行前显式请求确认。 |
 | 18 | `[S]` 质量关键任务须内嵌反馈循环 | 若输出须借人工判断（文档生成、代码审查），应设自我评估步骤：Claude 生成后自检并指出改进点，方行交付。 |
 
@@ -266,7 +266,7 @@ description: "Synthesis of two Anthropic sources (Cookbook + official Best Pract
 | # | 名称 | 标签 | 价值 |
 |---|---|---|---|
 | F-23 | description 是路由信号 | `[E]` 关键贡献 | 影响自动加载命中率，最易写错之一 |
-| F-24 | 路径以占位符表达（`${WIKIBASE_ROOT}`） | `[CK]` | 部署时再行展开，避免硬编码 |
+| F-24 | 路径以占位符表达（`${SKILL_ROOT}`） | `[CK]` | 部署时再行展开，避免硬编码 |
 | F-25 | 可组合性：不假设独占环境 | `[E]` | skill 与上百同类并存，独占 env var 必致崩溃 |
 | F-26 | 测试分级：个人 / 团队 / 公开 三档 | `[E]` | 不同分享范围对应不同最低要求 |
 | F-27 | 错误信息三要素：何错 + 为何 + 如何修 | `[E]` 细化 A #12 | 错误信息乃可执行信号，非 yes/no |
@@ -563,37 +563,7 @@ response = client.beta.messages.create(
 - `[S]` 用户可通过固定版本号锁定到历史版本
 - `[S]` 自定义 skill **必须**用 epoch 时间戳（无其它选择）
 
-### 7.9 占位符 `${WIKIBASE_ROOT}` 的使用示例
 
-> 原 F-24（Pass 6）仅提及占位符概念，此处补**具体用法**。
-
-**使用场景：** skill 部署在多台机器、不同用户的机器上时，硬编码绝对路径会导致：
-- 团队成员 A 的 `/Users/alice/project` 在 B 处为 `/Users/bob/project` → 脚本失败
-- CI 环境的 `/home/runner/work/...` 在本地开发环境不存在
-
-**占位符约定：**
-
-| 占位符 | 含义 | 示例值 |
-|---|---|---|
-| `${WIKIBASE_ROOT}` | skill 所在项目的根目录 | `/Users/xiang/Work/sfx` |
-| `${HOME}` | 用户主目录 | `/Users/xiang` |
-| `${SKILL_DIR}` | 当前 skill 的目录 | `${WIKIBASE_ROOT}/skills/pdf` |
-| `${WORKSPACE}` | 运行时工作目录 | `/tmp/run-12345` |
-
-**SKILL.md 中的使用方式：**
-
-```markdown
-## 快速开始
-
-将待处理 PDF 放入 `${WORKSPACE}/input/` 后运行：
-
-\`\`\`bash
-python ${SKILL_DIR}/scripts/validate.py ${WORKSPACE}/input/report.pdf
-\`\`\`
-
-脚本会：
-1. 校验 PDF 完整性
-2. 输出元数据至 `${WORKSPACE}/output/meta.json`
 ```
 
 **部署时展开（伪代码）：**
@@ -601,7 +571,7 @@ python ${SKILL_DIR}/scripts/validate.py ${WORKSPACE}/input/report.pdf
 ```python
 # 部署脚本 deploy.py
 content = open("SKILL.md").read()
-content = content.replace("${WIKIBASE_ROOT}", os.environ["WIKIBASE_ROOT"])
+content = content.replace("${SKILL_ROOT}", os.environ["SKILL_ROOT"])
 content = content.replace("${SKILL_DIR}", os.environ["SKILL_DIR"])
 content = content.replace("${WORKSPACE}", tempfile.mkdtemp())
 open("SKILL.deployed.md", "w").write(content)
@@ -611,15 +581,15 @@ open("SKILL.deployed.md", "w").write(content)
 
 ```bash
 # .env
-WIKIBASE_ROOT=/Users/xiang/Work/sfx
-SKILL_DIR=${WIKIBASE_ROOT}/skills/pdf
+SKILL_ROOT=/Users/dev/Work/skill-orchestrator
+SKILL_DIR=${SKILL_ROOT}/skills/pdf
 ```
 
 **反例（硬编码）：**
 
 ```markdown
 # ❌ 反例
-python /Users/xiang/Work/sfx/skills/pdf/scripts/validate.py ~/Downloads/report.pdf
+python /Users/dev/Work/skill-orchestrator/skills/pdf/scripts/validate.py ~/Downloads/report.pdf
 ```
 
 > **`[E]` 一句话原则：** 任何在 SKILL.md 出现的绝对路径，都应改为占位符；占位符在部署时由环境变量注入。
@@ -701,11 +671,4 @@ def test_error_missing_dep():
 
 ---
 
-## 修订记录
 
-- **v1 (2026-06-11 早期版)**: 三遍总结，未区分原典与作者外推。Adversarial reviewer 指出 30+ 处 unsupported claim，对照表几近全为捏造。
-- **v2 (本版)**: 引入 `[S]/[E]/[CK]/[F]` 标签系统；悉数删除 fabrication；明确将"好 skill = …"归入作者综合，**不当作原典摘要**。
-- **v3 (2026-06-11)**: 汲取 Anthropic 官方 [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) checklist 之要义。流程：两位独立 subagent 分别承担 gap analysis 与 merge 提案 → 第三位 subagent 仲裁分歧（5 处争议点悉数裁决）→ 作者最终定稿。新增：(1) 第二遍末尾的"补充硬约束"（22 项 Checklist 中 15 项为新内容），(2) 全新"第五遍"审查框架（三张审查表 + 审批门禁建议），(3) 速查表扩为新旧两源。所有 Checklist 条目标记为 `[S]`，解读标记为 `[E]`/`[CK]`。
-- **v4 (2026-06-11)**: 增设"第六遍：与官方 Best Practices 的交叉验证"。将 A 与 B 之差异显式化：(1) 22 项 A checklist + 5 项 B 独有特征（F-23..F-27）= 27 条特征，(2) 9 项 A 反模式 + 8 项 B 独有反模式（AP-10..AP-17）+ 3 项作者观察（AP-18..AP-20）= 21 条 anti-patterns，(3) 速查表细分为 A 独有 / B 独有 / 共有三类。新增之 16 条特征与 11 条反模式已同步至 `skills/skill-reviewer/references/writing-good-skills.md`，以供审计对照之用。
-- **v5 (2026-06-11, 本文件)**: 全文学术化润色。统一术语（"原典 / 外推 / 通识"），行文趋于严谨，保留带温度的版本叙事。
-- **v6 (2026-06-11, 本版)**: 经与两份原典逐节比对，新增"第七遍：补遗"10 节，覆盖：(1) Skills 与 Tools/Subagents 层级关系，(2) Bundle 目录结构约定，(3) description 宽窄度判定与修复步骤，(4) 负面清单汇总，(5) 写作动机叙事，(6) Beta 工具协同矩阵，(7) Claude A↔B 五步迭代循环，(8) 生产部署版本管理，(9) 占位符具体用法示例，(10) 测试通过判定标准。

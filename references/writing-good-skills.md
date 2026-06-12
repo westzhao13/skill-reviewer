@@ -71,7 +71,7 @@ route Claude to this skill from a 100-skill pool?
 
 ### F-24. Placeholder paths, not hardcoded paths
 
-- ✅ Good: `${WIKIBASE_ROOT}/wiki/INDEX.md`
+- ✅ Good: `${SKILL_ROOT}/wiki/INDEX.md`
 - ❌ Bad: `/home/user1/project/wiki/INDEX.md`
 
 **Why:** Portability across deployments. Distinguish from item #16 (path
