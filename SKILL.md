@@ -185,6 +185,16 @@ The expected report for this example lives at
 | Team share | Core quality (1-10) all PASS, ≥3 evals (item 19) |
 | Public distribution | All 22 PASS, multi-model tested (item 20), team feedback (item 22) |
 
+### Community perspectives (advisory, used during audit context)
+
+- [docs/perspectives/](docs/perspectives/) — Third-party reflections
+  (ground-level engineering perspective). Reading order:
+  - For priority framing on FAIL clusters → 2026-06-13-claw
+  - For business-context examples (e.g. trigger-rate
+    failure modes) → same
+
+---
+
 ## Maintaining this skill
 
 Regression cases live in `evals/`. After changing this checklist, report

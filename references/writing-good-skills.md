@@ -252,6 +252,26 @@ example of X.
    "why isn't this working?", the routing-signal insight (top section) is
    the most common answer.
 
+## Community perspectives
+
+For audit-time context beyond the official sources, see
+`docs/perspectives/` — third-party/ground-level engineering reflections
+on the 22-item checklist, not part of any upstream document.
+
+- `2026-06-13-claw-22-item-checklist.md` — Ground-level review of the
+  22-item checklist. Brings real-business grounding (JDM sales-agent
+  case where description failure cut trigger rates), priority stratification
+  (user-perception / engineering / collaboration layers), and 9 concrete
+  improvement suggestions to skill-reviewer itself. Read this when the
+  user asks "what's the most leveraged item to fix first", when a FAIL
+  result needs priority framing, or when discussing trade-offs in the
+  Audit report format.
+
+Treat perspectives as **advisory** — they extend the rule set with
+operational heuristics but do not override the 22-item verdict.
+
+---
+
 ## Source attribution
 
 This reference distills insights from:
