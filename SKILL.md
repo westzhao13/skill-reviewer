@@ -102,6 +102,22 @@ Group failures by severity:
 - **Important** (should fix): inconsistent terminology, weak examples, missing prerequisites, no documentation on scripts, no verification steps.
 - **Minor** (nice to fix): slightly long body (400-500 lines), off-by-a-few chars in frontmatter, ok-but-vague example.
 
+For each issue, also tag the **impact layer** so the user knows where the
+fix lands (which informs ROI; see the priority matrix in `references/`):
+
+| Layer | Tag | Meaning | Typical items |
+|-------|-----|---------|---------------|
+| User-perception | `[user-perception]` | Description / terminology / examples — what users see and what triggers the skill. Fixes here recover the most callers. | #1, #2, #6, #7 |
+| Engineering | `[engineering]` | Scripts / verification / errors — whether the skill works when called. | #3, #11, #12, #15, #17 |
+| Collaboration | `[collaboration]` | Evals / multi-model / team feedback — gating to share or distribute. | #19, #20, #21, #22 |
+| Hygiene | `[hygiene]` | Path style / nesting / progressive disclosure — clean but rarely high-impact. | #4, #8, #9, #10, #13, #14, #16, #18 |
+
+(English tags are used to stay portable across locales; see
+`references/writing-good-skills.md` for the canonical prose.)
+
+A single Critical issue can carry multiple tags (e.g. an empty description
+can be both `[user-perception]` and `[hygiene]`).
+
 For each issue, cite the item #, the specific file:line, a clear description, and a concrete fix suggestion.
 
 ```markdown
@@ -110,6 +126,34 @@ For each issue, cite the item #, the specific file:line, a clear description, an
 - **[#3] SKILL.md:87** — Body is 523 lines (limit: 500). The "Migration guide"
   section (lines 210-310) can be moved to `references/migration.md`.
 ```
+
+#### Part A.5: Good anchors (what this skill already does right)
+
+After listing failures, surface what the skill *gets right*. This
+matters because:
+
+- It anchors the user to a concrete target (they see what good looks
+  like in their own skill, not just what is wrong).
+- It is the inverse of the routing-signal insight: a good description
+  is a positive anchor, not just an absence of failure.
+
+Format:
+
+```markdown
+### Good anchors
+
+- **Description** (items 1, 2) — Contains 4 specific trigger keywords
+  (`docs`, `pdf`, `report`, `audit`) and explicit "what + when" structure.
+- **Body length** (item 3) — 287 lines, well within the 250-400 ideal band.
+- **Errors** (items 12, F-27) — All scripts use 3-element error pattern
+  (what / why / how-to-fix); sample: `Error: file not found at /x;
+  check /parent exists and is writable`.
+- **Verification** (item 17) — Step 6 of workflow reads back the output
+  file size and asserts it matches the expected row count.
+```
+
+Limit to 3-6 anchors. Pick the items that most distinguish this skill
+from a generic prompt wrapper.
 
 #### Part B: Full 22-item checklist
 
@@ -123,6 +167,41 @@ A table with every item, result, and brief note.
 | 3 | Core | Body < 500 lines | ❌ FAIL | 523 lines |
 | ... | ... | ... | ... | ... |
 ```
+
+#### Failure clusters (fix-one-fix-many grouping)
+
+Many FAILs share a single root cause. Before showing the summary, group
+related FAILs so the user can fix several findings with one edit. This
+implements the "fix-one-fix-many" pattern from
+[docs/perspectives/](docs/perspectives/).
+
+Format:
+
+```markdown
+### Failure clusters
+
+- **Cluster A — Description has no routing signal** (affects #1, #2, AP-11, AP-12, AP-20)
+  - Root cause: frontmatter description says "skill that helps" — no
+    specific scenario, no trigger keywords.
+  - Single fix: rewrite description to `<what> — use when <kw1>, <kw2>, <kw3>, <kw4>`
+    per F-23 anchor pattern (see references).
+  - Estimated recovery: 5 of 5 FAILs above resolved.
+- **Cluster B — Scripts are prompt wrappers** (affects #11, AP-10, AP-14)
+  - Root cause: `scripts/extract.py` body is `client.messages.create(prompt=...)`
+    — "prompt 披了件脚本外衣".
+  - Single fix: replace wrapper with real parse/transform/validate logic,
+    or remove the script and inline the (small) logic into SKILL.md.
+- **Cluster C** — none
+```
+
+Rules:
+
+- A cluster needs at least 2 FAILs sharing one root cause. Singleton
+  FAILs go in Part A only.
+- Cite the item numbers resolved by each cluster so the user can verify.
+- If no clusters exist, omit this section entirely.
+
+End the report
 
 End the report with a **summary**:
 - Pass rate: X/22 (Y PASS, Z FAIL, W SKIPPED)
