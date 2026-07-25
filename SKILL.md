@@ -46,12 +46,39 @@ If the user is new to this skill or asks what a good report looks like, review
 `evals/medium-skill-example/expected-report.md`. Use that example only for
 calibration; do not include it in the user's report unless asked.
 
+### Phase 2.0 — Mechanical pre-check (deterministic, runs before LLM)
+
+Before LLM-driven semantic checks, run these deterministic greps on
+SKILL.md and `scripts/`. Each yields a PASS/FAIL with concrete evidence.
+This implements the operational recommendation in
+[docs/perspectives/](docs/perspectives/) that items #3, #5, #16 are the
+three best candidates for automation — mechanical checks save LLM tokens
+and eliminate model variance on these purely structural properties.
+
+| Item | Check | Command (POSIX) | Result |
+|------|-------|-----------------|--------|
+| #3 | SKILL.md body line count | `awk 'BEGIN{n=0} /^---$/{c++; next} c>=2{n++} END{print n}' SKILL.md` | `>500` ⇒ FAIL; `<250` ⇒ warn (under-utilized body) |
+| #5 | Time-sensitive references | `grep -nE "\b(20[0-9]{2}|as of |v[0-9]+(\.[0-9]+){1,2})\b" SKILL.md` | non-empty (excluding `references/` old-patterns section) ⇒ FAIL |
+| #16 | Windows-style backslash paths | `grep -nF '\\' SKILL.md scripts/*` | non-empty ⇒ FAIL |
+
+Print the raw output of each command in the audit log so the user can
+sanity-check. If checks pass, record as PASS without invoking LLM. If
+checks fail, record as FAIL *with the grep evidence* — the LLM Phase 2
+will still run for context but the verdict is already locked.
+
+Structural checks (path style, line count, file nesting depth) belong
+in this phase. Semantic checks (#1, #2, #6, #7, #11-15, #17-18, #19-22)
+belong in Phase 2 below.
+
 ### Phase 2 — Audit (22 items)
 
 Go through every item below. For each, record: `PASS`, `FAIL`,
 `SKIPPED (reason)`, or `N/A`. For deeper context on *why* an item matters
 and the additional features/anti-patterns not in this checklist, see
 [references/writing-good-skills.md](references/writing-good-skills.md).
+
+Note: items #3, #5, #16 are already verdicted by Phase 2.0 above and
+do not need re-evaluation in this phase.
 
 #### Core quality (items 1–10)
 
