@@ -1,6 +1,6 @@
 ---
 name: skill-reviewer
-description: >
+description: |
   Review Claude Skills against the official 22-item Best Practices checklist.
   Use when the user asks to review, audit, check, or evaluate a skill directory
   or SKILL.md, including "review my skill", "skill review", "audit skill",
