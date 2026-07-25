@@ -39,12 +39,21 @@ If given pasted text:
 1. Read the full text.
 2. Note that structural checks will be marked `SKIPPED (no directory)`.
 
-### Phase 1.5 — Optional calibration example
+### Phase 1.5 — Calibration example (required for first-time use)
 
-If the user is new to this skill or asks what a good report looks like, review
-`evals/medium-skill-example/` first and compare the output with
-`evals/medium-skill-example/expected-report.md`. Use that example only for
-calibration; do not include it in the user's report unless asked.
+Before producing the user's report, run skill-reviewer on
+`evals/medium-skill-example/` and compare the output with
+`evals/medium-skill-example/expected-report.md`.
+
+This is **required the first time you run this skill in a session**
+because the LLM's first-pass tendency is to underweight item categories
+(especially #17, #18, AP-15). The medium example exposes common
+judgment boundaries before the user's report goes out. On subsequent
+runs in the same session, this step may be skipped unless the user
+changes the skill under review.
+
+Do not include the medium example's output in the user's report unless
+explicitly asked. Calibration is silent.
 
 ### Phase 2.0 — Mechanical pre-check (deterministic, runs before LLM)
 
@@ -259,9 +268,17 @@ review at all, so this step is non-optional.
    results. Marking "Ready for team share" while #19 (evals) shows `FAIL`
    is inconsistent — fix one or the other.
 
+5. **Cluster consistency** — FAILs grouped into a single cluster (Phase 3
+   "Failure clusters" section) must share exactly one root cause. If two
+   FAILs in a cluster have *different* root causes, split the cluster or
+   remove the offending FAIL. The inverse is also true: if two FAILs
+   share a root cause but appear in different clusters, merge them. This
+   implements the meta-principle "审查者自己也要被审查" — cluster
+   assignments are themselves a finding and must be self-checked.
+
 End the report with one literal line: `Self-check passed.` If any of the
-four checks triggered a fix, briefly note what changed (e.g.,
-"Self-check: removed unverifiable FAIL on #6; recounted summary").
+five checks triggered a fix, briefly note what changed (e.g.,
+"Self-check: split cluster A on root-cause divergence; recounted summary").
 
 ## Complete example
 
