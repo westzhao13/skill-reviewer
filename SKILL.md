@@ -39,13 +39,13 @@ If given pasted text:
 1. Read the full text.
 2. Note that structural checks will be marked `SKIPPED (no directory)`.
 
-### Phase 1.5 — Calibration example (required for first-time use)
+### Phase 1.5 — Calibration example (recommended for first-time use)
 
 Before producing the user's report, run skill-reviewer on
 `evals/medium-skill-example/` and compare the output with
 `evals/medium-skill-example/expected-report.md`.
 
-This is **required the first time you run this skill in a session**
+This is **recommended the first time you run this skill in a session**
 because the LLM's first-pass tendency is to underweight item categories
 (especially #17, #18, AP-15). The medium example exposes common
 judgment boundaries before the user's report goes out. On subsequent
@@ -66,23 +66,26 @@ and eliminate model variance on these purely structural properties.
 
 | Item | Check | Command (POSIX) | Result |
 |------|-------|-----------------|--------|
-| #3 | SKILL.md body line count | `awk 'BEGIN{n=0} /^---$/{c++; next} c>=2{n++} END{print n}' SKILL.md` | `>500` ⇒ FAIL; `<250` ⇒ warn (under-utilized body) |
-| #5 | Time-sensitive references | `grep -nE "\b(20[0-9]{2}|as of |v[0-9]+(\.[0-9]+){1,2})\b" SKILL.md` | non-empty (excluding `references/` old-patterns section) ⇒ FAIL |
-| #16 | Windows-style backslash paths | `grep -nF '\\' SKILL.md scripts/*` | non-empty ⇒ FAIL |
+| #3 | SKILL.md body line count | `awk 'BEGIN{n=0} /^---$/{c++; next} c>=2{n++} END{print n}' SKILL.md` | `>500` ⇒ FAIL; `<250` ⇒ WARN (under-utilized body) — render as ⚠️ in Part B |
+| #5 | Time-sensitive references | `grep -nE "(\bas of (20[0-9]{2}\|[A-Z][a-z]+ 20[0-9]{2})\|"v[0-9]+"\|v[0-9]+\.[0-9]+(\.[0-9]+)?\b)" SKILL.md \| grep -vE "^[0-9]+:\\| #?[0-9]+ \\|"` | non-empty ⇒ FAIL |
+| #16 | Windows-style backslash paths | `grep -nF "\\" SKILL.md \| grep -vE "^[0-9]+:\\| #?[0-9]+ \\|"; [ -d scripts ] && grep -rnF "\\" scripts/ \| grep -vE "^[0-9]+:\\| #?[0-9]+ \\|"` | non-empty ⇒ FAIL |
 
 Print the raw output of each command in the audit log so the user can
 sanity-check. If checks pass, record as PASS without invoking LLM. If
 checks fail, record as FAIL *with the grep evidence* — the LLM Phase 2
-will still run for context but the verdict is already locked.
+will still run for context. The mechanical verdict is locked EXCEPT for
+matches on lines that document the rule itself (e.g., the row showing
+the example of what to flag); the LLM adjudicates such self-references
+as PASS-with-note.
 
-Structural checks (path style, line count, file nesting depth) belong
-in this phase. Semantic checks (#1, #2, #6, #7, #11-15, #17-18, #19-22)
-belong in Phase 2 below.
+Structural checks (path style, line count) belong in this phase.
+Semantic checks (#1, #2, #6, #7, #8, #11-15, #17-18, #19-22) belong in
+Phase 2 below.
 
 ### Phase 2 — Audit (22 items)
 
 Go through every item below. For each, record: `PASS`, `FAIL`,
-`SKIPPED (reason)`, or `N/A`. For deeper context on *why* an item matters
+`WARN` (advisory, not a failure), `SKIPPED (reason)`, or `N/A`. For deeper context on *why* an item matters
 and the additional features/anti-patterns not in this checklist, see
 [references/writing-good-skills.md](references/writing-good-skills.md).
 
@@ -143,7 +146,7 @@ fix lands (which informs ROI; see the priority matrix in `references/`):
 
 | Layer | Tag | Meaning | Typical items |
 |-------|-----|---------|---------------|
-| User-perception | `[user-perception]` | Description / terminology / examples — what users see and what triggers the skill. Fixes here recover the most callers. | #1, #2, #6, #7 |
+| User-perception | `[user-perception]` | Description / terminology / examples — what users see and what triggers the skill. Fixes here recover the most callers. | #1, #2, #6, #7, AP-11, AP-12, AP-13, AP-20 |
 | Engineering | `[engineering]` | Scripts / verification / errors — whether the skill works when called. | #3, #11, #12, #15, #17 |
 | Collaboration | `[collaboration]` | Evals / multi-model / team feedback — gating to share or distribute. | #19, #20, #21, #22 |
 | Hygiene | `[hygiene]` | Path style / nesting / progressive disclosure — clean but rarely high-impact. | #4, #8, #9, #10, #13, #14, #16, #18 |
@@ -200,9 +203,11 @@ A table with every item, result, and brief note.
 |---|----------|------|--------|------|
 | 1 | Core | Description specific + key terms | ✅ PASS | "Creates branded PDF reports from markdown — use when..." |
 | 2 | Core | Description what + when | ❌ FAIL | Describes what but not when |
-| 3 | Core | Body < 500 lines | ❌ FAIL | 523 lines |
+| 3 | Core | Body < 500 lines | ⚠️ WARN | 187 lines — under-utilized body; consider expanding |
 | ... | ... | ... | ... | ... |
 ```
+
+Verdict glyphs: `✅ PASS`, `❌ FAIL`, `⚠️ WARN`, `➖ SKIPPED (reason)`, `— N/A`. `WARN` is reserved for advisory findings that are not failures (e.g., a body shorter than the 250-line lower band) but deserve the reader's attention.
 
 #### Failure clusters (fix-one-fix-many grouping)
 
@@ -237,17 +242,15 @@ Rules:
 - Cite the item numbers resolved by each cluster so the user can verify.
 - If no clusters exist, omit this section entirely.
 
-End the report
-
 End the report with a **summary**:
-- Pass rate: X/22 (Y PASS, Z FAIL, W SKIPPED)
+- Pass rate: X/22 (Y PASS, Z FAIL, U WARN, W SKIPPED)
 - Gating recommendation:
   - **Clear for personal use** / **Ready for team share** / **Ready for public distribution** (per the tier table below), or
   - **Not ready** with specific blocking items
 
 ### Phase 4 — Self-check before delivery
 
-Before showing the report to the user, run this four-point self-assessment.
+Before showing the report to the user, run this five-point self-assessment.
 A review skill that mis-judges items wastes the user's time more than no
 review at all, so this step is non-optional.
 

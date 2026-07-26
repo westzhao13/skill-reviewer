@@ -303,7 +303,7 @@ the FAIL count drop sharply. This is the "fix-one-fix-many" pattern.
 
 ---
 
-## Source attribution## Source attribution
+## Source attribution
 
 This reference distills insights from:
 - **Anthropic official [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)** — the 22-item source

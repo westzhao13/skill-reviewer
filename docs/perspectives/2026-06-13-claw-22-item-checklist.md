@@ -11,8 +11,6 @@ tags: [Claude, Agent Skills, 工程化, 实战拆解]
 
 Claude Skills 体系的核心思路是"渐进披露"（Progressive Disclosure）——Skills 按需加载，只把用得上的内容塞进上下文。
 
-![Skills 内容打包示意（来源：Anthropic 官方）](images/skill-bundling-content.png)
-
 然而几乎所有写过两三个 Skill 的人都会撞上同一面墙：
 
 > "这个 Skill 写得行不行？能不能发出去？"
