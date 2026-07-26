@@ -30,8 +30,42 @@ Before marking this skill ready for public distribution, capture at least:
 | Fast model run | TODO | Model name, date, three case results, mismatches |
 | Capable model run | TODO | Model name, date, three case results, mismatches |
 | Opus-class review | TODO | Model name, date, three case results, reviewer notes |
-| Real usage scenario | TODO | User-like prompt, target skill, actual report summary |
+| Real usage scenario | DONE | See "Real usage scenarios" below |
 | Independent review | TODO | Reviewer, date, accepted feedback or no-change note |
+
+## Real usage scenarios
+
+Idealized regression prompts (`请用 skill-reviewer 检查 evals/<case>/`) alone
+do **not** satisfy checklist item #21. Record at least one messy,
+underspecified, real-user-style run here.
+
+### 2026-07-26 — self-review of skill-reviewer (item #21)
+
+| Field | Value |
+|-------|-------|
+| Model | Cursor Grok 4.5 |
+| Date | 2026-07-26 |
+| Target | This repo root (`skill-reviewer/` itself) |
+| User prompt (verbatim) | `用这个skill-reviewer 来review自己` |
+| Why this counts as real usage | Messy / underspecified: no path, no "check against expected-report", no language preference spelled out; asks the skill to audit its own live directory, not a canned eval fixture. |
+
+Report summary:
+
+- Pass rate: 19/22 (15 PASS, 3 FAIL, 4 N/A)
+- Tier: Ready for team share
+- Failures at the time: #20 (multi-model), #21 (this evidence was still TODO), #22 (independent review)
+- Ended with: `Self-check passed.`
+
+Outcome for item #21: this run + the record below close the "idealized prompts only" gap. Re-audit after this write-up should mark #21 PASS.
+
+Messy prompt variants that also qualify (use any one; paste the actual prompt + summary when run):
+
+```text
+帮我看看这个 skill 行不行
+skill review 一下，感觉有点乱
+is my skill ready? （指着仓库根目录，不给路径）
+检查一下 SKILL.md 能不能分享给同事
+```
 
 ## Run log template
 

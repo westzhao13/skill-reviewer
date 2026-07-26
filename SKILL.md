@@ -59,10 +59,8 @@ explicitly asked. Calibration is silent.
 
 Before LLM-driven semantic checks, run these deterministic greps on
 SKILL.md and `scripts/`. Each yields a PASS/FAIL with concrete evidence.
-This implements the operational recommendation in
-[docs/perspectives/](docs/perspectives/) that items #3, #5, #16 are the
-three best candidates for automation — mechanical checks save LLM tokens
-and eliminate model variance on these purely structural properties.
+Items #3, #5, and #16 are mechanical checks, so running them here saves
+LLM tokens and eliminates model variance on structural properties.
 
 | Item | Check | Command (POSIX) | Result |
 |------|-------|-----------------|--------|
@@ -212,9 +210,7 @@ Verdict glyphs: `✅ PASS`, `❌ FAIL`, `⚠️ WARN`, `➖ SKIPPED (reason)`, `
 #### Failure clusters (fix-one-fix-many grouping)
 
 Many FAILs share a single root cause. Before showing the summary, group
-related FAILs so the user can fix several findings with one edit. This
-implements the "fix-one-fix-many" pattern from
-[docs/perspectives/](docs/perspectives/).
+related FAILs so the user can fix several findings with one edit.
 
 Format:
 
@@ -310,14 +306,6 @@ The expected report for this example lives at
 | Personal use | Items 1-3 PASS, no critical failures |
 | Team share | Core quality (1-10) all PASS, ≥3 evals (item 19) |
 | Public distribution | All 22 PASS, multi-model tested (item 20), team feedback (item 22) |
-
-### Community perspectives (advisory, used during audit context)
-
-- [docs/perspectives/](docs/perspectives/) — Third-party reflections
-  (ground-level engineering perspective). Reading order:
-  - For priority framing on FAIL clusters → 2026-06-13-claw
-  - For business-context examples (e.g. trigger-rate
-    failure modes) → same
 
 ---
 

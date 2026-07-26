@@ -56,6 +56,27 @@ evals/
 `results.md`。如果只是人工检查或本地草稿,必须明确标记为 inspection
 或 pending,不要写成已经完成的多模型测试。
 
+## 真实使用场景（checklist #21）
+
+三条理想化回归 prompt **不够**满足 #21。至少再跑一次凌乱、欠明确的
+真实用户说法,并把原文 prompt、目标 skill、报告摘要记入
+`results.md` 的 "Real usage scenarios" 一节。
+
+合格示例:
+
+```
+用这个skill-reviewer 来review自己
+帮我看看这个 skill 行不行
+is my skill ready?
+检查一下 SKILL.md 能不能分享给同事
+```
+
+不合格（仅用于回归对比,不算 #21）:
+
+```
+请用 skill-reviewer 检查 evals/good-skill-example/
+```
+
 ## 关于期望报告的精确度
 
 - `expected-report.md` 中的 Part B 是 **强约束**:逐项 PASS / FAIL / N/A
