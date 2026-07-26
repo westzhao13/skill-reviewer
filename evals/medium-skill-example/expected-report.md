@@ -82,3 +82,23 @@
 Important 问题 + 加 ≥3 个评测样例(#19)。
 
 `Self-check passed.`
+
+---
+
+## Part C: Claude Code Lessons (advisory)
+
+Phase 2.1 only — does **not** change the 22/22 pass rate or the Personal-use
+gating recommendation above. Tag: `[claude-code-lessons]`.
+
+| ID | Result | Note |
+|----|--------|------|
+| F-28 skill-type fit | ✅ PASS | Clear single type: Product Verification (markdown link checking) |
+| AP-21 no Gotchas | ⚠️ Important | Verification skill with domain rules (HEAD, relative paths, timeouts) but no `## Gotchas` / footguns section |
+| F-29 setup path | ⚠️ Minor | External HTTP via env (`TIMEOUT`, `MAX_PARALLEL`) listed without rationale or `config.example`; counts as thin setup docs |
+| F-31 on-demand hooks | — N/A | Manual verification skill; hooks optional, not expected for this fixture |
+| F-30 durable memory | — N/A | Stateless checker; no run history |
+| F-32 usage measurement | — N/A | Solo / personal fixture |
+
+When the user asks for full / Claude Code lessons mode, surface AP-21 and
+F-29 under Part A as Important / Minor with the `[claude-code-lessons]` tag.
+Leave the Summary gating at **Clear for personal use**.

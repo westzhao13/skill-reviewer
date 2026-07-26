@@ -55,3 +55,22 @@
 公开分发尚缺独立 review(#22),但这是单人 skill 的常态,不构成阻塞。
 
 `Self-check passed.`
+
+---
+
+## Part C: Claude Code Lessons (advisory)
+
+Phase 2.1 only — does **not** change the 22/22 pass rate or the Team-share
+gating recommendation above. Tag: `[claude-code-lessons]`.
+
+| ID | Result | Note |
+|----|--------|------|
+| F-28 skill-type fit | ✅ PASS | Clear single type: Data / tooling (CSV column-based dedup) |
+| AP-21 no Gotchas | ⚠️ Minor | No `## Gotchas`; acceptable for a small fixture with edge cases already in `references/csv-edge-cases.md` — still a soft signal to promote common footguns into an explicit Gotchas heading |
+| F-29 setup path | — N/A | Local file I/O + listed Python deps; no external Slack/HTTP credentials flow |
+| F-30 durable memory | — N/A | Stateless transform |
+| F-31 on-demand hooks | — N/A | Manual / CLI-style skill; hooks optional |
+| F-32 usage measurement | — N/A | Solo fixture |
+
+When the user asks for full / Claude Code lessons mode, surface AP-21 as
+Minor `[claude-code-lessons]`. Leave gating at **Ready for team share**.

@@ -16,8 +16,11 @@ The inspection rules are distilled from two core Anthropic documents, covering 2
 |----------|-------------|------------|
 | [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic's official authoring guide | [`docs/Skill authoring best practices.md`](docs/Skill%20authoring%20best%20practices.md) |
 | [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook primer | [`docs/Introduction to Claude Skills.md`](docs/Introduction%20to%20Claude%20Skills.md) |
+| [Lessons from Building Claude Code: How We Use Skills](https://x.com/trq212/article/2033949937936085378) | Anthropic operational lessons (skill types, Gotchas, hooks); basis for optional Phase 2.1 depth audits | [`docs/Lessons from Building Claude Code - How We Use Skills.md`](docs/Lessons%20from%20Building%20Claude%20Code%20-%20How%20We%20Use%20Skills.md) |
 
-In addition, the `docs/` directory contains two digested documents (one in English, one in Chinese) for quickly reviewing the key points.
+In addition, the `docs/` directory contains digested documents (EN/ZH) and
+[`skill-reviewer-gap-analysis-claude-code-lessons.md`](docs/skill-reviewer-gap-analysis-claude-code-lessons.md)
+for a gap analysis against the Lessons article.
 
 ## Review Dimensions
 
@@ -116,7 +119,9 @@ skill-reviewer/
     ├── Skill authoring best practices.md           # Official guide source
     ├── Introduction to Claude Skills.md            # Cookbook source
     ├── how-to-write-good-claude-skills.md          # English digest
-    └── how-to-write-good-claude-skills-cn.md       # Chinese digest
+    ├── how-to-write-good-claude-skills-cn.md       # Chinese digest
+    ├── Lessons from Building Claude Code - How We Use Skills.md  # Anthropic operational article
+    └── skill-reviewer-gap-analysis-claude-code-lessons.md        # Gap analysis vs this article
 ```
 
 Each `evals/*-skill-example/` contains a `SKILL.md` (the subject under review) and an `expected-report.md` (the expected output), used for regression validation and multi-model comparison. Actual run results, model differences, and independent review records are written to [`evals/results.md`](evals/results.md). See [`evals/README.md`](evals/README.md) for details.

@@ -35,8 +35,13 @@ evals/
 | 样例 | 主题 | 故意设计的问题 | 预期分享层级 |
 |------|------|---------------|-------------|
 | good | CSV 去重 | 几乎无问题 | Ready for team share |
-| medium | Markdown 链接检查 | 术语混用、示例抽象、错误处理含糊 | Clear for personal use |
+| medium | Markdown 链接检查 | 术语混用、示例抽象、错误处理含糊、魔法数字无依据、无输出验证、无 evals；Phase 2.1 另见无 Gotchas（AP-21） | Clear for personal use |
 | bad | 通用「代码助手」 | 描述空洞、术语混乱、时效信息、反斜杠路径、脚本只是包装 prompt | Not ready |
+
+**Phase 2.1 说明：** 默认回归只对 Part B 的 22 项与 Part A 做强/弱约束比对。
+三份 `expected-report.md` 均含 **Part C**（Claude Code Lessons advisory），
+仅在用户要求 full / Claude Code lessons 模式时作为校准基准；不改变各样例的
+分享层级 gating。
 
 ## 如何运行评测
 

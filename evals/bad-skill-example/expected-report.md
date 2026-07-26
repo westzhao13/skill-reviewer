@@ -105,3 +105,25 @@
 > 开始,然后决定:要么去掉脚本走纯 prompt 路线,要么让脚本承担实质工作。
 
 `Self-check passed.`
+
+---
+
+## Part C: Claude Code Lessons (advisory)
+
+Phase 2.1 only — does **not** change the 22/22 pass rate or the **Not ready**
+gating above (already blocked by Critical 22-item FAILs). Tag:
+`[claude-code-lessons]`.
+
+| ID | Result | Note |
+|----|--------|------|
+| F-28 skill-type fit | ⚠️ Important | Type unclear — helper / bot / assistant / agent straddle Library + Code Quality with no single primary job |
+| AP-21 no Gotchas | ⚠️ Important | Domain claims ("coding") but no Gotchas / footguns section |
+| F-28 + scripts expectation | ⚠️ Important | Body implies automation via `scripts\…` but script only punts to Claude — overlaps #11; cite both `[#11]` and `[claude-code-lessons]` |
+| F-29 setup path | ⚠️ Important | Uses Anthropic API with no setup / config / key guidance |
+| F-30 durable memory | — N/A | No run history claimed |
+| F-31 on-demand hooks | — N/A | Not applicable until the skill has a real workflow |
+| F-32 usage measurement | — N/A | Not distribution-ready |
+
+When the user asks for full / Claude Code lessons mode, surface F-28, AP-21,
+and F-29 under Part A as Important with `[claude-code-lessons]`. Gating
+remains **Not ready**.

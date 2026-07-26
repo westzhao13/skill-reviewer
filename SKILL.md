@@ -90,6 +90,21 @@ and the additional features/anti-patterns not in this checklist, see
 Note: items #3, #5, #16 are already verdicted by Phase 2.0 above and
 do not need re-evaluation in this phase.
 
+#### Phase 2.1 — Claude Code Lessons (advisory, optional depth)
+
+After the 22-item pass, consult
+[docs/Lessons from Building Claude Code - How We Use Skills.md](docs/Lessons%20from%20Building%20Claude%20Code%20-%20How%20We%20Use%20Skills.md)
+and [references/writing-good-skills.md](references/writing-good-skills.md)
+(F-28–F-32, AP-21–AP-22). These do **not** change the 22/22 pass rate unless
+the user asks for "full" or "Claude Code lessons" audit mode. When reported:
+
+- Tag findings `[claude-code-lessons]`
+- Classify primary skill type (one of nine categories from the article)
+- Note missing Gotchas, setup/config, hooks, or durable-memory guidance when
+  the skill type makes them relevant
+- See [docs/skill-reviewer-gap-analysis-claude-code-lessons.md](docs/skill-reviewer-gap-analysis-claude-code-lessons.md)
+  for the full mapping
+
 #### Core quality (items 1–10)
 
 | # | Item | What to check |
@@ -129,7 +144,9 @@ do not need re-evaluation in this phase.
 
 ### Phase 3 — Produce the report
 
-Output a structured report in two parts.
+Output a structured report: **Part A** (graded issues), **Part A.5** (good
+anchors), **Part B** (22-item checklist), optional **Failure clusters**, and
+— when Phase 2.1 / full Claude Code lessons mode is on — optional **Part C**.
 
 #### Part A: Graded issues (Critical / Important / Minor)
 
@@ -144,13 +161,12 @@ fix lands (which informs ROI; see the priority matrix in `references/`):
 
 | Layer | Tag | Meaning | Typical items |
 |-------|-----|---------|---------------|
-| User-perception | `[user-perception]` | Description / terminology / examples — what users see and what triggers the skill. Fixes here recover the most callers. | #1, #2, #6, #7, AP-11, AP-12, AP-13, AP-20 |
-| Engineering | `[engineering]` | Scripts / verification / errors — whether the skill works when called. | #3, #11, #12, #15, #17 |
-| Collaboration | `[collaboration]` | Evals / multi-model / team feedback — gating to share or distribute. | #19, #20, #21, #22 |
-| Hygiene | `[hygiene]` | Path style / nesting / progressive disclosure — clean but rarely high-impact. | #4, #8, #9, #10, #13, #14, #16, #18 |
+| User-perception | `[user-perception]` | Description / terminology / examples / type-fit — what users see and what triggers the skill. | #1, #2, #6, #7, AP-11, AP-12, AP-13, AP-20, F-28 |
+| Engineering | `[engineering]` | Scripts / verification / errors / Gotchas / setup — whether the skill works when called. | #3, #11, #12, #15, #17, AP-21, F-29 |
+| Collaboration | `[collaboration]` | Evals / multi-model / team feedback / usage — gating to share or distribute. | #19, #20, #21, #22, F-32 |
+| Hygiene | `[hygiene]` | Path style / nesting / progressive disclosure / hooks / memory / railroading. | #4, #8, #9, #10, #13, #14, #16, #18, F-24, F-30, F-31, AP-22 |
 
-(English tags are used to stay portable across locales; see
-`references/writing-good-skills.md` for the canonical prose.)
+Phase 2.1 findings also carry `[claude-code-lessons]` alongside a layer tag.
 
 A single Critical issue can carry multiple tags (e.g. an empty description
 can be both `[user-perception]` and `[hygiene]`).
@@ -316,23 +332,32 @@ format, or severity guidance:
 
 1. Review `evals/good-skill-example/`,
    `evals/medium-skill-example/`, and `evals/bad-skill-example/`.
-2. Compare each report against its `expected-report.md`.
+2. Compare each report against its `expected-report.md` (Part B is
+   strongly constrained; Part A may vary ±1 severity; **Part C** is the
+   Phase 2.1 calibration baseline when full / Claude Code lessons mode
+   is used).
 3. Record the run in `evals/results.md`, including model, date, pass/fail,
    and any reviewer feedback.
-4. Update expected reports if the rule change intentionally changes the output.
+4. Update expected reports (Parts A/B and Part C if Phase 2.1 rules
+   changed) when the rule change intentionally changes the output.
 
 ## References
 
 ### Working reference (used during audits)
 
 - [references/writing-good-skills.md](references/writing-good-skills.md) —
-  Distilled cross-comparison reference (267 lines, checklist format).
+  Distilled cross-comparison reference (~416 lines, checklist format).
   Use during audits as a **lookup table**. Contains the "description as
-  routing signal" insight, 5 additional features (F-23 to F-27), and 11
-  additional anti-patterns (AP-10 to AP-20) that extend this checklist.
+  routing signal" insight, features F-23–F-32, and anti-patterns
+  AP-10–AP-22 (including Claude Code Lessons F-28–F-32, AP-21–AP-22).
 
 ### Narrative docs (background reading, in docs/)
 
+- [docs/Lessons from Building Claude Code - How We Use Skills.md](docs/Lessons%20from%20Building%20Claude%20Code%20-%20How%20We%20Use%20Skills.md) —
+  Anthropic team's operational lessons (9 skill types, Gotchas, hooks,
+  memory, measuring usage). Use for **advisory** checks beyond the 22-item
+  list (F-28–F-32, AP-21–AP-22 in `references/`). Gap analysis:
+  [docs/skill-reviewer-gap-analysis-claude-code-lessons.md](docs/skill-reviewer-gap-analysis-claude-code-lessons.md).
 - [docs/how-to-write-good-claude-skills.md](docs/how-to-write-good-claude-skills.md) —
   Full English narrative (~490 lines) — the **source material** that
   `references/writing-good-skills.md` distills. Read this for background

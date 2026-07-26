@@ -16,8 +16,11 @@ Skill Reviewer 是一个面向 Skill 作者的审查工具,通过对 `SKILL.md` 
 |------|------|---------|
 | [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic 官方编写指南 | [`docs/Skill authoring best practices.md`](docs/Skill%20authoring%20best%20practices.md) |
 | [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook 入门篇 | [`docs/Introduction to Claude Skills.md`](docs/Introduction%20to%20Claude%20Skills.md) |
+| [Lessons from Building Claude Code: How We Use Skills](https://x.com/trq212/article/2033949937936085378) | Anthropic 实战经验（技能类型、Gotchas、hooks 等）；Phase 2.1 可选深度审查依据 | [`docs/Lessons from Building Claude Code - How We Use Skills.md`](docs/Lessons%20from%20Building%20Claude%20Code%20-%20How%20We%20Use%20Skills.md) |
 
-此外,`docs/` 目录下提供了两份消化版文档(中英文各一),便于快速查阅核心要点。
+此外,`docs/` 目录下提供了消化版文档(中英文)与
+[`skill-reviewer-gap-analysis-claude-code-lessons.md`](docs/skill-reviewer-gap-analysis-claude-code-lessons.md)
+对照分析,便于快速查阅。
 
 ## 评审维度
 
@@ -115,7 +118,9 @@ skill-reviewer/
     ├── Skill authoring best practices.md           # 官方指南原文
     ├── Introduction to Claude Skills.md            # Cookbook 原文
     ├── how-to-write-good-claude-skills.md          # 英文消化版
-    └── how-to-write-good-claude-skills-cn.md       # 中文消化版
+    ├── how-to-write-good-claude-skills-cn.md       # 中文消化版
+    ├── Lessons from Building Claude Code - How We Use Skills.md  # Anthropic 实战文章
+    └── skill-reviewer-gap-analysis-claude-code-lessons.md        # 与本文的对照与改进项
 ```
 
 每个 `evals/*-skill-example/` 下含一份 `SKILL.md`(被审对象)与一份 `expected-report.md`(期望输出),用于回归验证与多模型对比。实际运行结果、模型差异和独立 review 记录写入 [`evals/results.md`](evals/results.md)。详见 [`evals/README.md`](evals/README.md)。
