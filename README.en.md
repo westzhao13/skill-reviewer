@@ -14,8 +14,8 @@ The inspection rules are distilled from two core Anthropic documents, covering 2
 
 | Document | Description | Local Copy |
 |----------|-------------|------------|
-| [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic's official authoring guide | `docs/Skill authoring best practices.md` |
-| [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook primer | `docs/Introduction to Claude Skills.md` |
+| [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic's official authoring guide | [`docs/Skill authoring best practices.md`](docs/Skill%20authoring%20best%20practices.md) |
+| [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook primer | [`docs/Introduction to Claude Skills.md`](docs/Introduction%20to%20Claude%20Skills.md) |
 
 In addition, the `docs/` directory contains two digested documents (one in English, one in Chinese) for quickly reviewing the key points.
 

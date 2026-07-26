@@ -14,8 +14,8 @@ Skill Reviewer 是一个面向 Skill 作者的审查工具,通过对 `SKILL.md` 
 
 | 文档 | 说明 | 本地副本 |
 |------|------|---------|
-| [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic 官方编写指南 | `docs/Skill authoring best practices.md` |
-| [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook 入门篇 | `docs/Introduction to Claude Skills.md` |
+| [Skill Authoring Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | Anthropic 官方编写指南 | [`docs/Skill authoring best practices.md`](docs/Skill%20authoring%20best%20practices.md) |
+| [Introduction to Claude Skills](https://github.com/anthropics/anthropic-cookbook) | Anthropic Cookbook 入门篇 | [`docs/Introduction to Claude Skills.md`](docs/Introduction%20to%20Claude%20Skills.md) |
 
 此外,`docs/` 目录下提供了两份消化版文档(中英文各一),便于快速查阅核心要点。
 
